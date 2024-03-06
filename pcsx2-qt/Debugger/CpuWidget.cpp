@@ -105,6 +105,7 @@ CpuWidget::CpuWidget(QWidget* parent, DebugInterface& cpu)
 	connect(m_ui.treeModules, &QTreeWidget::itemDoubleClicked, this, &CpuWidget::onModuleTreeDoubleClick);
 	connect(m_ui.btnRefreshFunctions, &QPushButton::clicked, [this] { updateFunctionList(); });
 	connect(m_ui.txtFuncSearch, &QLineEdit::textChanged, [this] { updateFunctionList(); });
+	connect(m_ui.btnExportFunctions, &QPushButton::clicked, [this] { exportFunctionList(); });
 
 	m_ui.disassemblyWidget->SetCpu(&cpu);
 	m_ui.registerWidget->SetCpu(&cpu);
@@ -564,6 +565,19 @@ void CpuWidget::addAddressToSavedAddressesList(u32 address)
 	m_ui.tabWidget->setCurrentWidget(m_ui.tab_savedaddresses);
 	m_ui.savedAddressesList->model()->setData(addressIndex, address, Qt::UserRole);
 	m_ui.savedAddressesList->edit(m_ui.savedAddressesList->model()->index(rowCount - 1, 1));
+}
+
+void CpuWidget::exportFunctionList()
+{
+	QString csv;
+	for (int i = 0; i < m_ui.listFunctions->count(); i++)
+	{
+		QListWidgetItem* item = m_ui.listFunctions->item(i);
+		csv += QString("%0,%1\n").arg(item->data(Qt::UserRole).toUInt(), 8, 16, QChar('0')).arg(item->text());
+	}
+	QGuiApplication::clipboard()->setText(csv);
+
+	QMessageBox::information(this, tr("Export Function List"), tr("Function list copied to clipboard as CSV."));
 }
 
 void CpuWidget::updateFunctionList(bool whenEmpty)

@@ -66,6 +66,7 @@ public slots:
 	void onStackListDoubleClick(const QModelIndex& index);
 
 	void updateFunctionList(bool whenEmpty = false);
+	void exportFunctionList();
 	void onFuncListContextMenu(QPoint pos);
 	void onFuncListDoubleClick(QListWidgetItem* item);
 	bool getDemangleFunctions() const { return m_demangleFunctions; }
